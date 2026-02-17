@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import sendInvoice from "../../../../lib/sendEmail";
 import connectDB from "../../../../lib/db";
 import Booking from "../../../../models/Booking";
+import { mockDB } from "../../../../lib/mockDB";
+
+// Flag to track if MongoDB is available
+let mongoDBAvailable = true;
 
 // GET user bookings
 export async function GET(req) {
@@ -16,29 +20,33 @@ export async function GET(req) {
       );
     }
 
-    // Try to connect to database
-    try {
-      await connectDB();
-    } catch (dbError) {
-      console.error("Database connection failed:", dbError.message);
-      return NextResponse.json(
-        { 
-          success: false, 
-          message: "Database connection failed. Please check MongoDB configuration.",
-          error: dbError.message 
-        },
-        { status: 503 } // Service Unavailable
-      );
+    // Try to connect to MongoDB
+    if (mongoDBAvailable) {
+      try {
+        await connectDB();
+        const bookings = await Booking.find({ userEmail: email }).sort({
+          createdAt: -1,
+        });
+        return NextResponse.json({
+          success: true,
+          data: bookings,
+        });
+      } catch (dbError) {
+        console.error("❌ MongoDB connection failed:", dbError.message);
+        console.log("⚠️  Falling back to mock database for development");
+        mongoDBAvailable = false;
+      }
     }
 
-    const bookings = await Booking.find({ userEmail: email }).sort({
-      createdAt: -1,
-    });
-
+    // Fallback to mock database
+    console.log("📦 Using mock database (MongoDB unavailable)");
+    const bookings = await mockDB.findBookings(email);
     return NextResponse.json({
       success: true,
       data: bookings,
+      warning: "Using temporary storage. Data will be lost on server restart.",
     });
+
   } catch (error) {
     console.error("GET /api/bookings error:", error);
     return NextResponse.json(
@@ -60,22 +68,25 @@ export async function POST(req) {
       );
     }
 
-    // Try to connect to database
-    try {
-      await connectDB();
-    } catch (dbError) {
-      console.error("Database connection failed:", dbError.message);
-      return NextResponse.json(
-        { 
-          success: false, 
-          message: "Database connection failed. Please check MongoDB configuration.",
-          error: dbError.message 
-        },
-        { status: 503 } // Service Unavailable
-      );
+    let booking;
+
+    // Try to use MongoDB
+    if (mongoDBAvailable) {
+      try {
+        await connectDB();
+        booking = await Booking.create(body);
+      } catch (dbError) {
+        console.error("❌ MongoDB connection failed:", dbError.message);
+        console.log("⚠️  Falling back to mock database for development");
+        mongoDBAvailable = false;
+      }
     }
 
-    const booking = await Booking.create(body);
+    // Fallback to mock database
+    if (!mongoDBAvailable) {
+      console.log("📦 Using mock database (MongoDB unavailable)");
+      booking = await mockDB.createBooking(body);
+    }
 
     // Send invoice email, wrapped in try/catch to prevent crash
     try {
@@ -87,6 +98,7 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       data: booking,
+      warning: !mongoDBAvailable ? "Using temporary storage. Data will be lost on server restart." : undefined,
     });
   } catch (err) {
     console.error("POST /api/bookings error:", err);
