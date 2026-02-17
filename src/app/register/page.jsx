@@ -4,7 +4,8 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { setUserToken } from "../../../lib/setToken";
-import { auth } from "../../../lib/firebase";
+import { auth } from "../../../lib/firebaseClient";
+//import { auth } from "../../../lib/firebase";
 
 export default function Register() {
   const router = useRouter();

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import PrivateRoute from "@/components/PrivateRoute";
-import { auth } from "../../../lib/firebase";
+import { auth } from "../../../lib/firebaseClient";
+//import { auth } from "../../../lib/firebase";
 
 function MyBookingsContent() {
   const [bookings, setBookings] = useState([]);

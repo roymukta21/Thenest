@@ -3,7 +3,8 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { auth } from "../../lib/firebase";
+import { auth } from "../../lib/firebaseClient";
+//import { auth } from "../../lib/firebase";
 
 export default function PrivateRoute({ children }) {
   const router = useRouter();

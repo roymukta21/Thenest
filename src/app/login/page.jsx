@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider } from "../../../lib/firebaseClient"; // updated import
+//import { auth, googleProvider } from "../../../lib/firebaseClient"; 
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { setUserToken } from "../../../lib/setToken";
+import { auth, googleProvider } from "../../../lib/firebaseClient";
 
 export default function Login() {
   const router = useRouter();

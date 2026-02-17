@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { auth } from "../../lib/firebase";
+import { auth } from "../../lib/firebaseClient";
+//import { auth } from "../../lib/firebase";
 
 export default function Navbar() {
   const router = useRouter();
