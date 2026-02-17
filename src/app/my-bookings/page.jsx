@@ -14,6 +14,10 @@ function MyBookingsContent() {
 
   // ✅ get logged user
   useEffect(() => {
+    if (!auth) {
+      console.warn("Firebase auth not initialized. Please check environment variables.");
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (user) => {
       if (user) setUserEmail(user.email);
     });

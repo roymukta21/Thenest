@@ -14,6 +14,11 @@ export default function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    if (!auth) {
+      setError("Authentication service is not available. Please check configuration.");
+      return;
+    }
+
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;

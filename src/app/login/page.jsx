@@ -24,6 +24,11 @@ export default function Login() {
     e.preventDefault();
     setError(""); // reset previous errors
 
+    if (!auth) {
+      setError("Authentication service is not available. Please check configuration.");
+      return;
+    }
+
     const form = e.target;
     const email = form.email.value.trim();
     const password = form.password.value;
@@ -58,6 +63,12 @@ export default function Login() {
   // ✅ Google login
   const handleGoogle = async () => {
     setError(""); // reset previous errors
+    
+    if (!auth || !googleProvider) {
+      setError("Authentication service is not available. Please check configuration.");
+      return;
+    }
+    
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await setUserToken(result.user);

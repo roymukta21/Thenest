@@ -15,6 +15,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
+    if (!auth) {
+      console.warn("Firebase auth not initialized. Please check environment variables.");
+      return;
+    }
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
     return () => unsub();
   }, []);
