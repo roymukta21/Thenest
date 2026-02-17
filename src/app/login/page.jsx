@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { auth, googleProvider } from "../../../lib/firebase";
+import { auth, googleProvider } from "../../../lib/firebaseClient"; // updated import
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { setUserToken } from "../../../lib/setToken";
 
 export default function Login() {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [isClient, setIsClient] = useState(false);
+
+  // ✅ Ensure Firebase runs only on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null; // Prevent SSR errors
 
   // ✅ Email/password login
   const handleLogin = async (e) => {
@@ -30,7 +38,6 @@ export default function Login() {
       router.push("/");
     } catch (err) {
       console.error(err);
-      // More user-friendly error messages
       switch (err.code) {
         case "auth/user-not-found":
           setError("User not found. Please sign up first.");
