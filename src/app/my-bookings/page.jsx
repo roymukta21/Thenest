@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import PrivateRoute from "@/components/PrivateRoute";
+import { auth } from "../../../lib/firebase";
 
 function MyBookingsContent() {
   const [bookings, setBookings] = useState([]);

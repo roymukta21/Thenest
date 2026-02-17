@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/db";
-import Booking from "@/models/Booking";
+import Booking from "../../../../../models/Booking";
+import connectDB from "../../../../../lib/db";
+
 
 export async function DELETE(req, { params }) {
   try {

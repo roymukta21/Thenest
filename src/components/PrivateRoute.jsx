@@ -1,9 +1,9 @@
 "use client";
 
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { auth } from "../../lib/firebase";
 
 export default function PrivateRoute({ children }) {
   const router = useRouter();

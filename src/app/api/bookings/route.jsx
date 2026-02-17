@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/lib/db";
-import Booking from "@/models/Booking";
-import sendInvoice from "@/lib/sendEmail";
+import sendInvoice from "../../../../lib/sendEmail";
+import connectDB from "../../../../lib/db";
+import Booking from "../../../../models/Booking";
 
-// ✅ GET user bookings
+// GET user bookings
 export async function GET(req) {
   try {
     await connectDB();
@@ -27,7 +27,7 @@ export async function GET(req) {
   }
 }
 
-// ✅ CREATE booking + send invoice
+//  CREATE booking + send invoice
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -35,7 +35,7 @@ export async function POST(req) {
 
     const booking = await Booking.create(body);
 
-    // 📧 send invoice email
+    //  send invoice email
     await sendInvoice(body.userEmail, booking);
 
     return NextResponse.json({
