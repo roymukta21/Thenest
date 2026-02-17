@@ -2,18 +2,20 @@ import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema(
   {
-    userEmail: String,
-    serviceName: String,
-    duration: Number,
-    location: String,
-    totalCost: Number,
+    userEmail: { type: String, required: true },
+    serviceId: { type: String, required: true },
+    serviceName: { type: String, required: true },
+    duration: { type: Number, required: true },
+    location: { type: String, required: true },
+    totalCost: { type: Number, required: true },
     status: {
       type: String,
       default: "Pending",
+      enum: ["Pending", "Confirmed", "Cancelled", "Completed"],
     },
   },
   {
-    timestamps: true, // VERY IMPORTANT (adds createdAt & updatedAt)
+    timestamps: true, // adds createdAt & updatedAt
   }
 );
 
