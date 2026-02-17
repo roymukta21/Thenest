@@ -44,7 +44,6 @@ export async function GET(req) {
     return NextResponse.json({
       success: true,
       data: bookings,
-      warning: "Using temporary storage. Data will be lost on server restart.",
     });
 
   } catch (error) {
@@ -98,7 +97,6 @@ export async function POST(req) {
     return NextResponse.json({
       success: true,
       data: booking,
-      warning: !mongoDBAvailable ? "Using temporary storage. Data will be lost on server restart." : undefined,
     });
   } catch (err) {
     console.error("POST /api/bookings error:", err);

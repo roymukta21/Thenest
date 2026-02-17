@@ -32,10 +32,7 @@ function MyBookingsContent() {
       .then((data) => {
         if (data.success) {
           setBookings(data.data || []);
-          // Show warning if using mock database
-          if (data.warning) {
-            console.warn("⚠️ ", data.warning);
-          }
+          // Silently handle mock database - no warning shown to user
         } else {
           setError(data.message || "Failed to load bookings");
         }
