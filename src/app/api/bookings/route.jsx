@@ -16,7 +16,20 @@ export async function GET(req) {
       );
     }
 
-    await connectDB();
+    // Try to connect to database
+    try {
+      await connectDB();
+    } catch (dbError) {
+      console.error("Database connection failed:", dbError.message);
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: "Database connection failed. Please check MongoDB configuration.",
+          error: dbError.message 
+        },
+        { status: 503 } // Service Unavailable
+      );
+    }
 
     const bookings = await Booking.find({ userEmail: email }).sort({
       createdAt: -1,
@@ -47,7 +60,20 @@ export async function POST(req) {
       );
     }
 
-    await connectDB();
+    // Try to connect to database
+    try {
+      await connectDB();
+    } catch (dbError) {
+      console.error("Database connection failed:", dbError.message);
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: "Database connection failed. Please check MongoDB configuration.",
+          error: dbError.message 
+        },
+        { status: 503 } // Service Unavailable
+      );
+    }
 
     const booking = await Booking.create(body);
 

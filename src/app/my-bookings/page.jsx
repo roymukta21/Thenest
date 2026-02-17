@@ -9,6 +9,8 @@ import { auth } from "../../../lib/firebaseClient";
 function MyBookingsContent() {
   const [bookings, setBookings] = useState([]);
   const [userEmail, setUserEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // ✅ get logged user
   useEffect(() => {
@@ -22,9 +24,25 @@ function MyBookingsContent() {
   useEffect(() => {
     if (!userEmail) return;
 
+    setLoading(true);
+    setError("");
+
     fetch(`/api/bookings?email=${userEmail}`)
       .then((res) => res.json())
-      .then((data) => setBookings(data.data || []));
+      .then((data) => {
+        if (data.success) {
+          setBookings(data.data || []);
+        } else {
+          setError(data.message || "Failed to load bookings");
+        }
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setError("Failed to connect to server");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [userEmail]);
 
   // ✅ cancel booking
@@ -32,18 +50,41 @@ function MyBookingsContent() {
     const confirm = window.confirm("Cancel this booking?");
     if (!confirm) return;
 
-    await fetch(`/api/bookings/${id}`, {
-      method: "DELETE",
-    });
+    try {
+      const res = await fetch(`/api/bookings/${id}`, {
+        method: "DELETE",
+      });
 
-    setBookings((prev) => prev.filter((b) => b._id !== id));
+      const data = await res.json();
+
+      if (data.success) {
+        setBookings((prev) => prev.filter((b) => b._id !== id));
+      } else {
+        alert(data.message || "Failed to cancel booking");
+      }
+    } catch (err) {
+      console.error("Cancel error:", err);
+      alert("Failed to cancel booking");
+    }
   };
 
   return (
     <div className="p-10">
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
 
-      {bookings.length === 0 && (
+      {loading && <p className="text-gray-600">Loading bookings...</p>}
+
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+          <p className="text-sm mt-2">
+            Please check your MongoDB connection or contact support.
+          </p>
+        </div>
+      )}
+
+      {!loading && !error && bookings.length === 0 && (
         <p>No bookings found.</p>
       )}
 
